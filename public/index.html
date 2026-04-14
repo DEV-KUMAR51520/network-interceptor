@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Monitor Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Chart.js for real-time charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+</head>
+<body>
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading Dashboard...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span class="logo-icon">📊</span>
+                    <span class="logo-text">NetMonitor</span>
+                </div>
+            </div>
+
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-section="dashboard">
+                    <span class="nav-icon">🎯</span>
+                    <span class="nav-label">Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="devices">
+                    <span class="nav-icon">🖥️</span>
+                    <span class="nav-label">Devices</span>
+                </a>
+                <a href="#" class="nav-item" data-section="urls">
+                    <span class="nav-icon">🌐</span>
+                    <span class="nav-label">URLs</span>
+                </a>
+                <a href="#" class="nav-item" data-section="alerts">
+                    <span class="nav-icon">🚨</span>
+                    <span class="nav-label">Alerts</span>
+                </a>
+                <a href="#" class="nav-item" data-section="settings">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Settings</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+                    🌙 Dark Mode
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Navbar -->
+            <header class="navbar">
+                <div class="navbar-brand">
+                    <h1>Network Monitoring System</h1>
+                    <p class="navbar-subtitle">Real-time Infrastructure Monitoring</p>
+                </div>
+
+                <div class="navbar-status">
+                    <div class="status-indicator">
+                        <span class="status-dot online"></span>
+                        <span class="status-text">System Online</span>
+                    </div>
+                    <div class="navbar-time" id="currentTime"></div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-wrapper">
+                <!-- Dashboard Section -->
+                <section id="dashboard" class="section active">
+                    <div class="section-header">
+                        <h2>System Metrics</h2>
+                        <div class="refresh-info">
+                            <span id="refreshStatus">Last updated: now</span>
+                            <span class="refresh-icon">🔄</span>
+                        </div>
+                    </div>
+
+                    <!-- Metrics Grid -->
+                    <div class="metrics-grid">
+                        <!-- CPU Card -->
+                        <div class="metric-card">
+                            <div class="card-header">
+                                <h3>CPU Usage</h3>
+                                <span class="card-icon">⚡</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value" id="cpuValue">--</div>
+                                <div class="metric-unit">%</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="cpuFill" style="width: 0%"></div>
+                                </div>
+                                <p class="metric-label">Processor Load</p>
+                            </div>
+                        </div>
+
+                        <!-- Memory Card -->
+                        <div class="metric-card">
+                            <div class="card-header">
+                                <h3>Memory Usage</h3>
+                                <span class="card-icon">💾</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value" id="memoryValue">--</div>
+                                <div class="metric-unit">%</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="memoryFill" style="width: 0%"></div>
+                                </div>
+                                <p class="metric-label">RAM Utilization</p>
+                            </div>
+                        </div>
+
+                        <!-- Network Card -->
+                        <div class="metric-card">
+                            <div class="card-header">
+                                <h3>Network Traffic</h3>
+                                <span class="card-icon">🌐</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value" id="networkValue">--</div>
+                                <div class="metric-unit">MB/s</div>
+                                <div class="traffic-stats">
+                                    <div class="traffic-item">
+                                        <span class="traffic-label">↓ In:</span>
+                                        <span id="trafficIn">--</span>
+                                    </div>
+                                    <div class="traffic-item">
+                                        <span class="traffic-label">↑ Out:</span>
+                                        <span id="trafficOut">--</span>
+                                    </div>
+                                </div>
+                                <p class="metric-label">Data Transfer</p>
+                            </div>
+                        </div>
+
+                        <!-- Uptime Card -->
+                        <div class="metric-card">
+                            <div class="card-header">
+                                <h3>System Uptime</h3>
+                                <span class="card-icon">⏱️</span>
+                            </div>
+                            <div class="card-content">
+                                <div class="metric-value" id="uptimeValue">--</div>
+                                <p class="metric-label">Continuous Operation</p>
+                                <div class="uptime-bar">
+                                    <div class="uptime-indicator"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chart Section -->
+                    <div class="chart-container">
+                        <div class="chart-header">
+                            <h3>CPU Usage Trend</h3>
+                            <p class="chart-subtitle">Last 30 seconds of data</p>
+                        </div>
+                        <canvas id="cpuChart"></canvas>
+                    </div>
+                </section>
+
+                <!-- Devices Section -->
+                <section id="devices" class="section">
+                    <div class="section-header">
+                        <h2>Connected Devices</h2>
+                        <div class="devices-controls">
+                            <input type="text" id="deviceSearch" placeholder="Search devices..." class="search-input">
+                            <button class="btn-refresh">🔄 Refresh</button>
+                        </div>
+                    </div>
+
+                    <div class="devices-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Total Devices:</span>
+                            <span class="summary-value" id="totalDevices">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Online:</span>
+                            <span class="summary-value online" id="onlineDevices">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Offline:</span>
+                            <span class="summary-value offline" id="offlineDevices">0</span>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="devices-table">
+                            <thead>
+                                <tr>
+                                    <th>Device Name</th>
+                                    <th>IP Address</th>
+                                    <th>Location</th>
+                                    <th>Status</th>
+                                    <th>Response Time</th>
+                                    <th>Last Checked</th>
+                                </tr>
+                            </thead>
+                            <tbody id="devicesTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Network URLs Section -->
+                <section id="urls" class="section">
+                    <div class="section-header">
+                        <h2>Network URL Monitoring</h2>
+                        <div class="urls-controls">
+                            <input type="text" id="customUrl" placeholder="https://example.com" class="search-input" style="min-width: 300px;">
+                            <button class="btn-refresh" id="monitorCustomUrl">🔍 Monitor</button>
+                            <button class="btn-refresh" id="refreshUrls">🔄 Refresh</button>
+                        </div>
+                    </div>
+
+                    <div class="urls-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Total Monitored:</span>
+                            <span class="summary-value" id="totalUrls">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Online:</span>
+                            <span class="summary-value online" id="onlineUrls">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Offline:</span>
+                            <span class="summary-value offline" id="offlineUrls">0</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Availability:</span>
+                            <span class="summary-value" id="availabilityPercent">--</span>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="devices-table">
+                            <thead>
+                                <tr>
+                                    <th>Website Name</th>
+                                    <th>URL</th>
+                                    <th>Category</th>
+                                    <th>Status</th>
+                                    <th>Status Code</th>
+                                    <th>Response Time</th>
+                                    <th>Uptime</th>
+                                    <th>Last Checked</th>
+                                </tr>
+                            </thead>
+                            <tbody id="urlsTableBody">
+                                <!-- Populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Alerts Section -->
+                <section id="alerts" class="section">
+                    <div class="section-header">
+                        <h2>System Alerts</h2>
+                        <button class="btn-clear-alerts">✕ Clear All</button>
+                    </div>
+
+                    <div id="alertsContainer" class="alerts-container">
+                        <div class="no-alerts">
+                            <p>✓ No active alerts</p>
+                            <p class="no-alerts-text">All systems operating normally</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settings" class="section">
+                    <div class="section-header">
+                        <h2>Settings</h2>
+                    </div>
+
+                    <div class="settings-grid">
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <h3>Refresh Interval</h3>
+                                <p class="setting-description">Data update frequency</p>
+                            </div>
+                            <div class="setting-control">
+                                <select id="refreshInterval" class="input-select">
+                                    <option value="2000">2 seconds</option>
+                                    <option value="5000">5 seconds</option>
+                                    <option value="10000">10 seconds</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <h3>Alert Thresholds</h3>
+                                <p class="setting-description">Configure alert triggers</p>
+                            </div>
+                            <div class="setting-control">
+                                <label>
+                                    CPU Warning: <span id="cpuThreshold">80</span>%
+                                    <input type="range" id="cpuThresholdSlider" min="50" max="95" value="80">
+                                </label>
+                                <label>
+                                    Memory Warning: <span id="memThreshold">80</span>%
+                                    <input type="range" id="memThresholdSlider" min="50" max="95" value="80">
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="setting-card">
+                            <div class="setting-header">
+                                <h3>Notifications</h3>
+                                <p class="setting-description">Alert notification settings</p>
+                            </div>
+                            <div class="setting-control">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="enableNotifications" checked>
+                                    <span>Enable browser notifications</span>
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="soundAlerts" checked>
+                                    <span>Sound alerts</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="notification-toast"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
