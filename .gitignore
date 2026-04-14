@@ -38,3 +38,12 @@ coverage/
 # Logs
 logs/
 *.log
+
+# Vercel
+.vercel/
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
